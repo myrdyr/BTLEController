@@ -5,7 +5,7 @@ import android.bluetooth.BluetoothAdapter;
 public class Scanner extends Thread{
     private final BluetoothAdapter bluetoothAdapter;
     private final BluetoothAdapter.LeScanCallback mLeScanCallback;
-    private static final int SCAN_TIME = 750;
+    private static final int SCAN_TIME = 500;
 
     private volatile boolean isScanning = false;
 

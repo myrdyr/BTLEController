@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class MainActivity extends ListActivity {
@@ -65,13 +66,40 @@ public class MainActivity extends ListActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
-        /* @TODO: Impl */
+        getMenuInflater().inflate(R.menu.scanning, menu);
+        /* Not scanning, hide stop button */
+        if (scanner == null || !scanner.isScanning()){
+            menu.findItem(R.id.menu_stop).setVisible(false);
+            menu.findItem(R.id.menu_scan).setVisible(true);
+            menu.findItem(R.id.menu_refresh).setActionView(null);
+        }
+        else {
+            menu.findItem(R.id.menu_stop).setVisible(true);
+            menu.findItem(R.id.menu_scan).setVisible(false);
+            menu.findItem(R.id.menu_refresh).setActionView(R.layout.actionbar_progress);
+        }
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        /* @TODO: Impl */
+        switch (item.getItemId()){
+            case R.id.menu_scan:
+                btleDevicesAdapter.clear();
+                if(scanner == null){
+                    scanner = new Scanner(bluetoothAdapter, mLeScanCallback);
+                    scanner.startScanning();
+                    invalidateOptionsMenu(); /* Refresh menu */
+                }
+                break;
+            case R.id.menu_stop:
+                if (scanner != null){
+                    scanner.stopScanning();
+                    scanner = null;
+                    invalidateOptionsMenu(); /* Refresh menu */
+                }
+                break;
+        }
         return true;
     }
 
@@ -108,6 +136,18 @@ public class MainActivity extends ListActivity {
             scanner.stopScanning();
             scanner = null;
         }
+    }
+
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        final BluetoothDevice device = btleDevicesAdapter.getDevice(position);
+        if (device == null)
+            return;
+
+        final Intent intent = new Intent(this, DeviceControllerActivity.class);
+        intent.putExtra(DeviceControllerActivity.EXTRAS_DEVICE_NAME, device.getName());
+        intent.putExtra(DeviceControllerActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
+        startActivity(intent);
     }
 
     private BluetoothAdapter.LeScanCallback mLeScanCallback =
