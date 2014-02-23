@@ -5,6 +5,12 @@
     <string name="app_titlebar">RoboController</string>
     <string name="unknown_device">Unknown Device</string>
     <string name="label_services">Services</string>
+    <string name="no_data">No data</string>
+    <string name="connected">Connected</string>
+    <string name="disconnected">Disconnected</string>
+
+    <!-- Actions -->
+    <string name="action_demo">Demo</string>
 
     <!-- Menu -->
     <string name="menu_connect">Connect</string>
