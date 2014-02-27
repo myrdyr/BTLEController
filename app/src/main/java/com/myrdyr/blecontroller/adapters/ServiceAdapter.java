@@ -11,8 +11,11 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.myrdyr.blecontroller.R;
+import com.myrdyr.blecontroller.service.CustomService;
+import com.myrdyr.blecontroller.service.CustomServices;
 import com.myrdyr.blecontroller.service.InfoService;
 import com.myrdyr.blecontroller.service.InfoServices;
+import com.myrdyr.blecontroller.service.RobotService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,8 +34,9 @@ public class ServiceAdapter extends BaseExpandableListAdapter {
     private OnServiceItemClickListener serviceListener;
 
     private static final String MODE_READ = "R";
-    private static final String MODE_NOTIFY = "N";
     private static final String MODE_WRITE = "W";
+    private static final String MODE_NOTIFY = "N";
+    private static final String MODE_INDICATE = "I";
 
     private final ArrayList<BluetoothGattService> services;
     private final HashMap<BluetoothGattService, ArrayList<BluetoothGattCharacteristic>> characteristics;
@@ -118,25 +122,25 @@ public class ServiceAdapter extends BaseExpandableListAdapter {
         final BluetoothGattService item = getGroup(groupPosition);
 
         final String uuid = item.getUuid().toString();
-//        final TiSensor<?> sensor = TiSensors.getSensor(uuid);
+        final CustomService customService = CustomServices.getCustomService(uuid);
         final InfoService infoService = InfoServices.getService(uuid);
 
         final String serviceName;
-//        if (sensor != null)
-//            serviceName = sensor.getName();
-        if ( infoService != null )
+        if (customService != null)
+            serviceName = customService.getName();
+        else if ( infoService != null )
             serviceName = infoService.getName();
         else
             serviceName = "Unknown";
 
         holder.name.setText(serviceName);
         holder.uuid.setText(uuid);
-//        if (isDemoable(sensor)) {
-//            holder.demo.setTag(item);
-//            holder.demo.setVisibility(View.VISIBLE);
-//        } else {
+        if (isDemoable(customService)) {
+            holder.demo.setTag(item);
+            holder.demo.setVisibility(View.VISIBLE);
+        } else {
             holder.demo.setVisibility(View.GONE);
-//        }
+        }
 
         return convertView;
     }
@@ -193,13 +197,12 @@ public class ServiceAdapter extends BaseExpandableListAdapter {
         holder.service = item.getService();
 
         final String serviceUUID = item.getService().getUuid().toString();
-//        final TiSensor<?> sensor = TiSensors.getSensor(serviceUUID);
+        final CustomService<?> customService = CustomServices.getCustomService(serviceUUID);
         final InfoService infoService = InfoServices.getService(serviceUUID);
-          if (false) {
-//        if ( sensor != null ) {
-//            name = sensor.getCharacteristicName(uuid);
-//
-//            if ( sensor.isConfigUUID(uuid) ) {
+        if ( customService != null ) {
+            name = customService.getCharacteristicName(uuid);
+
+            if ( customService.isConfigUUID(uuid) ) {
 //                if ( sensor instanceof TiPeriodicalSensor) {
 //                    final TiPeriodicalSensor periodicalSensor = (TiPeriodicalSensor) sensor;
 //
@@ -211,10 +214,10 @@ public class ServiceAdapter extends BaseExpandableListAdapter {
 //                    holder.seek.setVisibility(View.VISIBLE);
 //                    holder.uuid.setVisibility(View.GONE);
 //                }
-//            } else {
-//                holder.uuid.setVisibility(View.VISIBLE);
-//                holder.seek.setVisibility(View.GONE);
-//            }
+            } else {
+                holder.uuid.setVisibility(View.VISIBLE);
+                holder.seek.setVisibility(View.GONE);
+            }
         } else if (infoService != null) {
             name = infoService.getCharacteristicName(uuid);
 
@@ -240,7 +243,9 @@ public class ServiceAdapter extends BaseExpandableListAdapter {
     }
 
     /* Check if the current DB contain a service usable for RobotController */
-    private static boolean isDemoable() {
+    private static boolean isDemoable(CustomService<?> customService) {
+        if (customService instanceof RobotService)
+            return true;
         return false;
     }
 
@@ -249,16 +254,22 @@ public class ServiceAdapter extends BaseExpandableListAdapter {
         if ((prop & BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
             modeBuilder.append(MODE_READ);
         }
-        if ((prop & BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
-            if (modeBuilder.length() > 0)
-                modeBuilder.append("/");
-            modeBuilder.append(MODE_NOTIFY);
-        }
         if ((prop & BluetoothGattCharacteristic.PROPERTY_WRITE) > 0) {
             if (modeBuilder.length() > 0)
                 modeBuilder.append("/");
             modeBuilder.append(MODE_WRITE);
         }
+        if ((prop & BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
+            if (modeBuilder.length() > 0)
+                modeBuilder.append("/");
+            modeBuilder.append(MODE_NOTIFY);
+        }
+        if ((prop & BluetoothGattCharacteristic.PROPERTY_INDICATE) > 0) {
+            if (modeBuilder.length() > 0)
+                modeBuilder.append("/");
+            modeBuilder.append(MODE_INDICATE);
+        }
+
         return modeBuilder.toString();
     }
 

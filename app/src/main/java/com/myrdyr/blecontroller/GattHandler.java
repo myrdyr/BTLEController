@@ -6,6 +6,8 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothProfile;
 
+import com.myrdyr.blecontroller.service.CustomService;
+
 import java.util.LinkedList;
 
 /**
@@ -33,9 +35,9 @@ public class GattHandler extends BluetoothGattCallback{
     private final LinkedList<GattHandler.ServiceAction> queue = new LinkedList<ServiceAction>();
     private volatile ServiceAction currentAction;
 
-//    public void update(final TiSensor sensor) {
-//        queue.add(sensor.update());
-//    }
+    public void update(final CustomService customService) {
+        queue.add(customService.update());
+    }
 //
 //    public void enable(TiSensor sensor, boolean enable) {
 //        final ServiceAction[] actions = sensor.enable(enable);

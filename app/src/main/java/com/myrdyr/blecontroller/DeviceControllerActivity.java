@@ -20,6 +20,11 @@ import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
 import com.myrdyr.blecontroller.adapters.ServiceAdapter;
+import com.myrdyr.blecontroller.demo.DemoActivity;
+import com.myrdyr.blecontroller.demo.RobotControllerActivity;
+import com.myrdyr.blecontroller.service.CustomService;
+import com.myrdyr.blecontroller.service.CustomServices;
+import com.myrdyr.blecontroller.service.RobotService;
 
 import java.util.List;
 
@@ -112,30 +117,28 @@ public class DeviceControllerActivity extends Activity{
 //                }
             };
 
-//    private final TiServicesAdapter.OnServiceItemClickListener demoClickListener = new TiServicesAdapter.OnServiceItemClickListener() {
-//        @Override
-//        public void onDemoClick(BluetoothGattService service) {
-//            final TiSensor<?> sensor = TiSensors.getSensor(service.getUuid().toString());
-//            if (sensor == null)
-//                return;
-//
-//            final Class<? extends DemoSensorActivity> demoClass;
-//            if (sensor instanceof TiAccelerometerSensor)
-//                demoClass = DemoAccelerometerSensorActivity.class;
-//            else if (sensor instanceof TiGyroscopeSensor)
-//                demoClass = DemoGyroscopeSensorActivity.class;
-//            else
-//                return;
-//
-//            final Intent demoIntent = new Intent();
-//            demoIntent.setClass(DeviceServicesActivity.this, demoClass);
-//            demoIntent.putExtra(DemoSensorActivity.EXTRAS_DEVICE_ADDRESS, deviceAddress);
-//            demoIntent.putExtra(DemoSensorActivity.EXTRAS_SENSOR_UUID, service.getUuid().toString());
-//            startActivity(demoIntent);
-//        }
-//
-//        @Override
-//        public void onServiceEnabled(BluetoothGattService service, boolean enabled) {
+    private final ServiceAdapter.OnServiceItemClickListener demoClickListener = new ServiceAdapter.OnServiceItemClickListener() {
+        @Override
+        public void onDemoClick(BluetoothGattService service) {
+            final CustomService<?> customService = CustomServices.getCustomService(service.getUuid().toString());
+            if (customService == null)
+                return;
+
+            final Class<? extends DemoActivity> demoClass;
+            if (customService instanceof RobotService)
+                demoClass = RobotControllerActivity.class;
+            else
+                return;
+
+            final Intent demoIntent = new Intent();
+            demoIntent.setClass(DeviceControllerActivity.this, demoClass);
+            demoIntent.putExtra(RobotControllerActivity.EXTRAS_DEVICE_ADDRESS, deviceAddress);
+            demoIntent.putExtra(RobotControllerActivity.EXTRAS_SENSOR_UUID, service.getUuid().toString());
+            startActivity(demoIntent);
+        }
+
+        @Override
+        public void onServiceEnabled(BluetoothGattService service, boolean enabled) {
 //            if (gattServiceAdapter == null)
 //                return;
 //
@@ -150,17 +153,17 @@ public class DeviceControllerActivity extends Activity{
 //                bleService.enableSensor(activeSensor, false);
 //            activeSensor = sensor;
 //            bleService.enableSensor(sensor, true);
-//        }
+        }
 //
-//        @Override
-//        public void onServiceUpdated(BluetoothGattService service) {
+        @Override
+        public void onServiceUpdated(BluetoothGattService service) {
 //            final TiSensor<?> sensor = TiSensors.getSensor(service.getUuid().toString());
 //            if (sensor == null)
 //                return;
 //
 //            bleService.updateSensor(sensor);
-//        }
-//    };
+        }
+    };
 
     private void clearUI() {
         gattServicesList.setAdapter((SimpleExpandableListAdapter) null);
@@ -262,7 +265,7 @@ public class DeviceControllerActivity extends Activity{
             return;
 
         gattServiceAdapter = new ServiceAdapter(this, gattServices);
-        //gattServiceAdapter.setServiceListener(demoClickListener); //@TODO
+        gattServiceAdapter.setServiceListener(demoClickListener);
         gattServicesList.setAdapter(gattServiceAdapter);
     }
 

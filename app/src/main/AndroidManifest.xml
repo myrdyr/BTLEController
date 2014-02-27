@@ -21,6 +21,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".DeviceControllerActivity"/>
+        <activity android:name=".demo.RobotControllerActivity"/>
         <service android:name=".BtleService" android:enabled="true"/>
     </application>
 

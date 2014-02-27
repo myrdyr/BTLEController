@@ -14,6 +14,8 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.myrdyr.blecontroller.service.CustomService;
+
 import java.util.List;
 
 /**
@@ -215,12 +217,6 @@ public class BtleService extends Service {
         gatt = null;
     }
 
-    public List<BluetoothGattService> getSupportedGattServices() {
-        if (gatt == null) return null;
-
-        return gatt.getServices();
-    }
-
     public void readCharacteristic(BluetoothGattCharacteristic characteristic) {
         if (adapter == null || gatt == null) {
             Log.w(TAG, "BluetoothAdapter not initialized");
@@ -228,4 +224,45 @@ public class BtleService extends Service {
         }
         gatt.readCharacteristic(characteristic);
     }
+
+//    public void updateSensor(CustomService<?> customService) {
+//        if (customService == null)
+//            return;
+//
+//        if (adapter == null || gatt == null) {
+//            Log.w(TAG, "BluetoothAdapter not initialized");
+//            return;
+//        }
+//
+//        gattHandler.update(customService);
+//        gattHandler.execute(gatt);
+//    }
+//
+//    /**
+//     * Enables or disables notification on a give characteristic.
+//     *
+//     * @param customService
+//     * @param enabled If true, enable notification.  False otherwise.
+//     */
+//
+//    public void enableSensor(CustomService<?> customService, boolean enabled) {
+//        if (customService == null)
+//            return;
+//
+//        if (adapter == null || gatt == null) {
+//            Log.w(TAG, "BluetoothAdapter not initialized");
+//            return;
+//        }
+//
+//        gattHandler.enable(customService, enabled);
+//        gattHandler.execute(gatt);
+//    }
+/* @TODO: Figure out */
+    public List<BluetoothGattService> getSupportedGattServices() {
+        if (gatt == null) return null;
+
+        return gatt.getServices();
+    }
+
+
 }
