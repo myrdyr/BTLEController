@@ -111,7 +111,7 @@ public class BtleService extends Service {
         final Intent intent = new Intent(action);
         intent.putExtra(EXTRA_SERVICE_UUID, characteristic.getService().getUuid().toString());
         intent.putExtra(EXTRA_CHARACTERISTIC_UUID, characteristic.getUuid().toString());
-
+/* @TODO: Figure out */
         //final TiSensor<?> sensor = TiSensors.getSensor(characteristic.getService().getUuid().toString());
 //        if (sensor != null) {
         if (false) {

@@ -19,6 +19,8 @@ import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
+import com.myrdyr.blecontroller.adapters.ServiceAdapter;
+
 import java.util.List;
 
 /**
