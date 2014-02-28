@@ -12,7 +12,7 @@ public class RobotService extends CustomService<Integer>{
     private static final String UUID_SERVICE = "1ee51000-9fef-11e3-9635-0002a5d5c51b";
     private static final String UUID_DATA = "1ee52000-9fef-11e3-9635-0002a5d5c51b";
 
-    private int command_data = 0;
+    private int command = 0;
 
     public RobotService() {
         super();
@@ -50,6 +50,10 @@ public class RobotService extends CustomService<Integer>{
 
     @Override
     public GattHandler.ServiceAction update() {
-        return write(UUID_DATA, new byte[]{(byte) command_data});
+        return write(UUID_DATA, new byte[]{(byte) command});
+    }
+
+    public void setCommand(int cmd) {
+        command = cmd;
     }
 }

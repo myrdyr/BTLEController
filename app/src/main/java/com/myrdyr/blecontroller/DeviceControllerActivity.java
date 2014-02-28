@@ -134,6 +134,7 @@ public class DeviceControllerActivity extends Activity{
             demoIntent.setClass(DeviceControllerActivity.this, demoClass);
             demoIntent.putExtra(RobotControllerActivity.EXTRAS_DEVICE_ADDRESS, deviceAddress);
             demoIntent.putExtra(RobotControllerActivity.EXTRAS_SENSOR_UUID, service.getUuid().toString());
+            demoIntent.putExtra(RobotControllerActivity.EXTRAS_DATA_UUID, customService.getDataUUID());
             startActivity(demoIntent);
         }
 

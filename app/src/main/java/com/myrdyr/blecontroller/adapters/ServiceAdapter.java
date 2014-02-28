@@ -162,10 +162,9 @@ public class ServiceAdapter extends BaseExpandableListAdapter {
                     if (serviceListener == null || !fromUser)
                         return;
 
-//                    final TiSensor<?> sensor = TiSensors.getSensor(holder.service.getUuid().toString());
-//                    if (sensor == null)
-//                        return;
-//
+                    final CustomService<?> customService = CustomServices.getCustomService(holder.service.getUuid().toString());
+                    if (customService == null)
+                        return;
 //                    if (sensor instanceof TiPeriodicalSensor) {
 //                        final TiPeriodicalSensor periodicalSensor = (TiPeriodicalSensor) sensor;
 //                        periodicalSensor.setPeriod(progress + periodicalSensor.getMinPeriod());

@@ -1,6 +1,7 @@
 package com.myrdyr.blecontroller.demo;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import com.myrdyr.blecontroller.BtleService;
+import com.myrdyr.blecontroller.GattHandler;
 import com.myrdyr.blecontroller.service.CustomService;
 import com.myrdyr.blecontroller.service.CustomServices;
 
@@ -24,10 +26,12 @@ public abstract class DemoActivity extends Activity{
 
     public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
     public static final String EXTRAS_SENSOR_UUID = "SERVICE_UUID";
+    public static final String EXTRAS_DATA_UUID = "EXTRAS_DATA_UUID";
 
     private BtleService btleService;
     private String serviceUuid;
     private String deviceAddress;
+    private String dataUuid;
 
     // Handles various events fired by the Service.
     // ACTION_GATT_CONNECTED: connected to a GATT server.
@@ -83,6 +87,7 @@ public abstract class DemoActivity extends Activity{
         final Intent intent = getIntent();
         deviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
         serviceUuid = intent.getStringExtra(EXTRAS_SENSOR_UUID);
+        dataUuid = intent.getStringExtra(EXTRAS_DATA_UUID);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -130,5 +135,9 @@ public abstract class DemoActivity extends Activity{
         intentFilter.addAction(BtleService.ACTION_GATT_DISCONNECTED);
         intentFilter.addAction(BtleService.ACTION_DATA_AVAILABLE);
         return intentFilter;
+    }
+
+    public void updateService(CustomService<?> service) {
+        btleService.updateService(service);
     }
 }

@@ -224,6 +224,14 @@ public class BtleService extends Service {
         gatt.readCharacteristic(characteristic);
     }
 
+    public void writeCharacteristic(BluetoothGattCharacteristic characteristic) {
+        if (adapter == null || gatt == null) {
+            Log.w(TAG, "BluetoothAdapter not initialized");
+            return;
+        }
+        gatt.writeCharacteristic(characteristic);
+    }
+
     public void updateService(CustomService<?> customService) {
         if (customService == null)
             return;

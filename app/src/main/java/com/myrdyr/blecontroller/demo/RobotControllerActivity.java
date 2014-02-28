@@ -1,12 +1,17 @@
 package com.myrdyr.blecontroller.demo;
 
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.myrdyr.blecontroller.GattHandler;
 import com.myrdyr.blecontroller.R;
 import com.myrdyr.blecontroller.service.CustomService;
 import com.myrdyr.blecontroller.service.RobotService;
+
+import java.util.UUID;
 
 /**
  * Created by myrdyr on 27.02.14.
@@ -14,6 +19,10 @@ import com.myrdyr.blecontroller.service.RobotService;
 public class RobotControllerActivity extends DemoActivity {
     private final static String TAG = RobotControllerActivity.class.getSimpleName();
     private Robot robot = new Robot();
+    private RobotService robotService = new RobotService();
+//    private String dataUuid;
+//    UUID uuid;
+//    private BluetoothGattCharacteristic cmdChar;
 
     private TextView viewText;
 
@@ -26,6 +35,10 @@ public class RobotControllerActivity extends DemoActivity {
 
         viewText = (TextView) findViewById(R.id.robot_cmd_status);
 
+//        final Intent intent = getIntent();
+//        dataUuid = intent.getStringExtra(EXTRAS_DATA_UUID);
+//        uuid = UUID.fromString(dataUuid);
+//        cmdChar = new BluetoothGattCharacteristic(uuid, 0x10, 0x11);
     }
 
     @Override
@@ -38,8 +51,6 @@ public class RobotControllerActivity extends DemoActivity {
             viewText.setText(text);
         }
     }
-
-
 
     public void onButtonClick(View v)
     {
@@ -58,7 +69,10 @@ public class RobotControllerActivity extends DemoActivity {
                 robot.updateCommand(Robot.COMMAND.DOWN);
                 break;
         }
-        final String cmd = Integer.toString(robot.getCommand());
-        viewText.setText(cmd);
+        final int cmd = robot.getCommand();
+        viewText.setText(Integer.toString(cmd));
+        robotService.setCommand(cmd);
+        //GattHandler.ServiceAction update = robotService.update();
+        updateService(robotService);
     }
 }
