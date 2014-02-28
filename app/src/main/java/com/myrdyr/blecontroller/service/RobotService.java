@@ -34,7 +34,7 @@ public class RobotService extends CustomService<Integer>{
     }
 
     @Override
-    public String getConfigUUID() { /* @TODO: Remove? */
+    public String getConfigUUID() {
         return null;
     }
 

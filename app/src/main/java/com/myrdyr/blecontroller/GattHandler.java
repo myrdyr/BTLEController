@@ -38,14 +38,16 @@ public class GattHandler extends BluetoothGattCallback{
     public void update(final CustomService customService) {
         queue.add(customService.update());
     }
-//
-//    public void enable(TiSensor sensor, boolean enable) {
-//        final ServiceAction[] actions = sensor.enable(enable);
-//        for ( ServiceAction action : actions ) {
-//            this.queue.add(action);
-//        }
-//    }
-    /* @TODO: Figure out */
+
+    public void enable(CustomService customService, boolean enable) {
+        if(customService.getConfigUUID() != null)
+        {
+            final ServiceAction[] actions = customService.enable(enable);
+            for ( ServiceAction action : actions ) {
+                this.queue.add(action);
+            }
+        }
+    }
 
     public void execute(BluetoothGatt gatt) {
         if (currentAction != null)

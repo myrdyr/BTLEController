@@ -9,25 +9,36 @@
         android:layout_height="wrap_content"
         android:text="UP"
         android:id="@+id/button_up"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:onClick="onButtonClick" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="RIGHT"
+        android:text="Right"
         android:id="@+id/button_right"
-        android:layout_gravity="right" />
+        android:layout_gravity="right"
+        android:onClick="onButtonClick" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="LEFT"
-        android:id="@+id/button_left" />
+        android:text="Left"
+        android:id="@+id/button_left"
+        android:onClick="onButtonClick" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/robot_cmd_status"
+        android:layout_gravity="center_horizontal" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Down"
         android:id="@+id/button_down"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:onClick="onButtonClick" />
 </LinearLayout>

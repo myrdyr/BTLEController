@@ -43,12 +43,12 @@ public abstract class DemoActivity extends Activity{
                 //TODO: show toast
                 finish();
             } else if (BtleService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
-                final CustomService<?> sensor = CustomServices.getCustomService(serviceUuid);
-                //btleService.enableSensor(sensor, true); /* @TODO: Figure out, remove? */
+                final CustomService<?> customService = CustomServices.getCustomService(serviceUuid);
+                btleService.enableService(customService, true);
             } else if (BtleService.ACTION_DATA_AVAILABLE.equals(action)) {
                 final CustomService<?> sensor = CustomServices.getCustomService(serviceUuid);
                 final String text = intent.getStringExtra(BtleService.EXTRA_TEXT);
-                onDataRecieved(sensor, text);
+                onDataReceived(sensor, text);
             }
         }
     };
@@ -74,7 +74,7 @@ public abstract class DemoActivity extends Activity{
         }
     };
 
-    public abstract void onDataRecieved(CustomService<?> customService, String text);
+    public abstract void onDataReceived(CustomService<?> customService, String text);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

@@ -15,6 +15,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.myrdyr.blecontroller.service.CustomService;
+import com.myrdyr.blecontroller.service.CustomServices;
 
 import java.util.List;
 
@@ -83,13 +84,13 @@ public class BtleService extends Service {
             super.onCharacteristicRead(gatt, characteristic, status);
 
             if (status == BluetoothGatt.GATT_SUCCESS) {
-//                final TiSensor<?> sensor = TiSensors.getSensor(characteristic.getService().getUuid().toString());
-//                if (sensor != null) {
-//                    if (sensor.onCharacteristicRead(characteristic)) {
-//                        return;
-//                    }
-//                }
-                // @TODO: Figure out
+                final CustomService<?> customService = CustomServices.getCustomService(characteristic.getService().getUuid().toString());
+                if (customService != null) {
+                    /* Give the characteristic to the appropriate service */
+                    if (customService.onCharacteristicRead(characteristic)) {
+                        return;
+                    }
+                }
                 broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
             }
         }
@@ -113,14 +114,12 @@ public class BtleService extends Service {
         final Intent intent = new Intent(action);
         intent.putExtra(EXTRA_SERVICE_UUID, characteristic.getService().getUuid().toString());
         intent.putExtra(EXTRA_CHARACTERISTIC_UUID, characteristic.getUuid().toString());
-/* @TODO: Figure out */
-        //final TiSensor<?> sensor = TiSensors.getSensor(characteristic.getService().getUuid().toString());
-//        if (sensor != null) {
-        if (false) {
-//            sensor.onCharacteristicChanged(characteristic);
-//            final String text = sensor.getDataString();
-//            intent.putExtra(EXTRA_TEXT, text);
-//            sendBroadcast(intent);
+        final CustomService<?> customService = CustomServices.getCustomService(characteristic.getService().getUuid().toString());
+        if (customService != null) {
+            customService.onCharacteristicChanged(characteristic);
+            final String text = customService.getDataString();
+            intent.putExtra(EXTRA_TEXT, text);
+            sendBroadcast(intent);
         } else {
             // For all other profiles, writes the data formatted in HEX.
             final byte[] data = characteristic.getValue();
@@ -225,39 +224,38 @@ public class BtleService extends Service {
         gatt.readCharacteristic(characteristic);
     }
 
-//    public void updateSensor(CustomService<?> customService) {
-//        if (customService == null)
-//            return;
-//
-//        if (adapter == null || gatt == null) {
-//            Log.w(TAG, "BluetoothAdapter not initialized");
-//            return;
-//        }
-//
-//        gattHandler.update(customService);
-//        gattHandler.execute(gatt);
-//    }
-//
-//    /**
-//     * Enables or disables notification on a give characteristic.
-//     *
-//     * @param customService
-//     * @param enabled If true, enable notification.  False otherwise.
-//     */
-//
-//    public void enableSensor(CustomService<?> customService, boolean enabled) {
-//        if (customService == null)
-//            return;
-//
-//        if (adapter == null || gatt == null) {
-//            Log.w(TAG, "BluetoothAdapter not initialized");
-//            return;
-//        }
-//
-//        gattHandler.enable(customService, enabled);
-//        gattHandler.execute(gatt);
-//    }
-/* @TODO: Figure out */
+    public void updateService(CustomService<?> customService) {
+        if (customService == null)
+            return;
+
+        if (adapter == null || gatt == null) {
+            Log.w(TAG, "BluetoothAdapter not initialized");
+            return;
+        }
+
+        gattHandler.update(customService);
+        gattHandler.execute(gatt);
+    }
+
+    /**
+     * Enables or disables notification on a give characteristic.
+     *
+     * @param customService
+     * @param enabled If true, enable notification.  False otherwise.
+     */
+
+    public void enableService(CustomService<?> customService, boolean enabled) {
+        if (customService == null)
+            return;
+
+        if (adapter == null || gatt == null) {
+            Log.w(TAG, "BluetoothAdapter not initialized");
+            return;
+        }
+
+        gattHandler.enable(customService, enabled);
+        gattHandler.execute(gatt);
+    }
     public List<BluetoothGattService> getSupportedGattServices() {
         if (gatt == null) return null;
 

@@ -47,6 +47,7 @@ public class DeviceControllerActivity extends Activity{
     private BtleService btleService;
     private boolean isConnected = false;
 
+    private CustomService<?> activeService;
 
     /* BtleService manager */
     private final ServiceConnection serviceConnection = new ServiceConnection() {
@@ -97,24 +98,23 @@ public class DeviceControllerActivity extends Activity{
                         return false;
 
                     final BluetoothGattCharacteristic characteristic = gattServiceAdapter.getChild(groupPosition, childPosition);
-                    //final TiSensor<?> sensor = TiSensors.getSensor(characteristic.getService().getUuid().toString());
+                    final CustomService<?> customService = CustomServices.getCustomService(characteristic.getService().getUuid().toString());
 
-//                    if (activeSensor != null)
-//                        bleService.enableSensor(activeSensor, false);
+                    if (activeService != null)
+                        btleService.enableService(activeService, false);
 
-//                    if (sensor == null) {
-                    if(true)
+                    if (customService == null) {
                         btleService.readCharacteristic(characteristic);
                         return true;
                     }
 
-//                    if (sensor == activeSensor)
-//                        return true;
-//
-//                    activeSensor = sensor;
-//                    bleService.enableSensor(sensor, true);
-//                    return true;
-//                }
+                    if (customService == activeService)
+                        return true;
+
+                    activeService = customService;
+                    btleService.enableService(customService, true);
+                    return true;
+                }
             };
 
     private final ServiceAdapter.OnServiceItemClickListener demoClickListener = new ServiceAdapter.OnServiceItemClickListener() {
@@ -139,29 +139,29 @@ public class DeviceControllerActivity extends Activity{
 
         @Override
         public void onServiceEnabled(BluetoothGattService service, boolean enabled) {
-//            if (gattServiceAdapter == null)
-//                return;
-//
-//            final TiSensor<?> sensor = TiSensors.getSensor(service.getUuid().toString());
-//            if (sensor == null)
-//                return;
-//
-//            if (sensor == activeSensor)
-//                return;
-//
-//            if (activeSensor != null)
-//                bleService.enableSensor(activeSensor, false);
-//            activeSensor = sensor;
-//            bleService.enableSensor(sensor, true);
+            if (gattServiceAdapter == null)
+                return;
+
+            final CustomService<?> customService = CustomServices.getCustomService(service.getUuid().toString());
+            if (customService == null)
+                return;
+
+            if (customService == activeService)
+                return;
+
+            if (activeService != null)
+                btleService.enableService(activeService, false);
+            activeService = customService;
+            btleService.enableService(customService, true);
         }
-//
+// /*@TODO: Figure out */
         @Override
         public void onServiceUpdated(BluetoothGattService service) {
-//            final TiSensor<?> sensor = TiSensors.getSensor(service.getUuid().toString());
-//            if (sensor == null)
-//                return;
-//
-//            bleService.updateSensor(sensor);
+            final CustomService<?> customService = CustomServices.getCustomService(service.getUuid().toString());
+            if (customService == null)
+                return;
+
+            btleService.updateService(customService);
         }
     };
 
