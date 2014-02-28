@@ -17,8 +17,12 @@ public class Robot {
 
     public void updateCommand(COMMAND command)
     {
+        /* 1. Driving and turning are mutually exclusive.
+           2. Turning or driving in the same direction as it is moving will toggle it off.
+         */
         switch (command) {
             case LEFT:
+                state[CMD_DRIVE_CMD_POS] = false;                   /* Stop driving */
                 if(state[CMD_TURN_CMD_POS] == true) {               /* Already turning...*/
                     if(state[CMD_TURN_DIR_POS] == DIR_LEFT) {       /* ...left */
                         state[CMD_TURN_CMD_POS] = false;            /* Stop turning */
@@ -33,6 +37,7 @@ public class Robot {
                 }
                 break;
             case RIGHT:
+                state[CMD_DRIVE_CMD_POS] = false;                   /* Stop driving */
                 if(state[CMD_TURN_CMD_POS] == true) {               /* Already turning...*/
                     if(state[CMD_TURN_DIR_POS] == DIR_LEFT) {       /* ... left */
                         state[CMD_TURN_DIR_POS] = DIR_RIGHT;         /* Swap directions */
@@ -47,6 +52,7 @@ public class Robot {
                 }
                 break;
             case UP:
+                state[CMD_TURN_CMD_POS] = false;                    /* Stop turning */
                 if(state[CMD_DRIVE_CMD_POS] == true) {              /* Already driving... */
                     if (state[CMD_DRIVE_DIR_POS] == DIR_FORWARD) {  /* ...forward */
                         state[CMD_DRIVE_CMD_POS] = false;
@@ -62,6 +68,7 @@ public class Robot {
                 }
                 break;
             case DOWN:
+                state[CMD_TURN_CMD_POS] = false;                    /* Stop turning */
                 if(state[CMD_DRIVE_CMD_POS] == true) {              /* Already driving... */
                     if (state[CMD_DRIVE_DIR_POS] == DIR_BACKWARD) {  /* ...backward */
                         state[CMD_DRIVE_CMD_POS] = false;
